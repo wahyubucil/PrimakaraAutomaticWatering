@@ -39,7 +39,7 @@
             android:layout_centerHorizontal="true"
             android:text="@string/wet_soil"
             android:layout_below="@id/tv_humidity"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:textSize="16sp"
             android:textColor="@color/colorBlueWet"
             android:textAllCaps="true"/>
