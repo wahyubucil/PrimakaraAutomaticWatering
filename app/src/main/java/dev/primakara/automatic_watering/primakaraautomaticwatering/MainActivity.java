@@ -6,6 +6,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,11 +23,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private ApiService mApiService;
+
+    @BindView(R.id.srl_main) SwipeRefreshLayout mMainSwipeRefresh;
 
     @BindView(R.id.main_layout) View mMainLayout;
     @BindView(R.id.switch_automatic_watering) Switch mAutomaticWateringSwitch;
@@ -46,9 +49,16 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        mMainSwipeRefresh.setOnRefreshListener(this);
+
         checkWifiConnected();
 
         setupFailedConnectLayout();
+    }
+
+    @Override
+    public void onRefresh() {
+        checkWifiConnected();
     }
 
     private void setupFailedConnectLayout() {
@@ -79,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 mFailedConnect.setVisibility(View.VISIBLE);
                 mMainLoading.setVisibility(View.GONE);
+                mMainSwipeRefresh.setRefreshing(false);
             }
         }
     }
@@ -107,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
     private void handleSuccessData(Watering watering) {
         if (watering.isSuccess()) {
             mMainLoading.setVisibility(View.GONE);
+            mMainSwipeRefresh.setRefreshing(false);
             mMainLayout.setVisibility(View.VISIBLE);
 
             mAutomaticWateringSwitch.setChecked(watering.isAutomaticWatering());
@@ -120,4 +132,5 @@ public class MainActivity extends AppCompatActivity {
             // TODO: USE ERROR LAYOUT
         }
     }
+
 }
