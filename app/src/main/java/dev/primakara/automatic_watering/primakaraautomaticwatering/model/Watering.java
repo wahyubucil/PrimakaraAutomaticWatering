@@ -10,6 +10,9 @@ public class Watering{
 	@SerializedName("humidity")
 	private int humidity;
 
+	@SerializedName("dry")
+	private boolean dry;
+
 	@SerializedName("automatic_watering")
 	private boolean automaticWatering;
 
@@ -29,6 +32,14 @@ public class Watering{
 		return humidity;
 	}
 
+	public void setDry(boolean dry){
+		this.dry = dry;
+	}
+
+	public boolean isDry(){
+		return dry;
+	}
+
 	public void setAutomaticWatering(boolean automaticWatering){
 		this.automaticWatering = automaticWatering;
 	}
@@ -38,12 +49,14 @@ public class Watering{
 	}
 
 	@Override
- 	public String toString(){
-		return 
-			"Watering{" + 
-			"success = '" + success + '\'' + 
-			",humidity = '" + humidity + '\'' + 
-			",automatic_watering = '" + automaticWatering + '\'' + 
-			"}";
-		}
+	public String toString(){
+		return
+				"Response{" +
+						"success = '" + success + '\'' +
+						",humidity = '" + humidity + '\'' +
+						",dry = '" + dry + '\'' +
+						",automatic_watering = '" + automaticWatering + '\'' +
+						"}";
+	}
+
 }
