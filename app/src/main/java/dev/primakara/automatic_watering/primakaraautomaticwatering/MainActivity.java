@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.BindView;
@@ -27,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
     private ApiService mApiService;
 
     @BindView(R.id.main_layout) View mMainLayout;
+    @BindView(R.id.switch_automatic_watering) Switch mAutomaticWateringSwitch;
+    @BindView(R.id.tv_humidity) TextView mHumidityTextView;
+    @BindView(R.id.tv_humidity_status) TextView mHumidityStatusTextView;
+    @BindView(R.id.btn_flush) Button mFlushButton;
 
     @BindView(R.id.failed_connect) View mFailedConnect;
 
@@ -93,14 +99,25 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<Watering> call, Throwable t) {
                 Toast.makeText(MainActivity.this, "Error retrieving data from internet : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "OnFailure : " + t.getMessage());
+                // TODO: CREATE ERROR LAYOUT
             }
         });
     }
 
     private void handleSuccessData(Watering watering) {
-        Toast.makeText(MainActivity.this,
-                String.valueOf(watering.getHumidity()), Toast.LENGTH_SHORT).show();
-        mMainLoading.setVisibility(View.GONE);
-        mMainLayout.setVisibility(View.VISIBLE);
+        if (watering.isSuccess()) {
+            mMainLoading.setVisibility(View.GONE);
+            mMainLayout.setVisibility(View.VISIBLE);
+
+            mAutomaticWateringSwitch.setChecked(watering.isAutomaticWatering());
+
+            String humidityString = String.valueOf(watering.getHumidity());
+            mHumidityTextView.setText(humidityString);
+
+            int humidityStatus = watering.isDry() ? R.string.dry_soil : R.string.wet_soil;
+            mHumidityStatusTextView.setText(humidityStatus);
+        } else {
+            // TODO: USE ERROR LAYOUT
+        }
     }
 }
