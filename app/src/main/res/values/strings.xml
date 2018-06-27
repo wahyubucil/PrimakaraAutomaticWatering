@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Primakara Automatic Watering</string>
+    <string name="wifi_ssid">\"Villa Bukit\"</string>
 </resources>
