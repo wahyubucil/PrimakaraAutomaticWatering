@@ -2,10 +2,12 @@ package dev.primakara.automatic_watering.primakaraautomaticwatering;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -123,11 +125,32 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             mAutomaticWateringSwitch.setChecked(watering.isAutomaticWatering());
 
+            if (watering.isAutomaticWatering()) {
+                mFlushButton.setVisibility(View.GONE);
+            } else {
+                mFlushButton.setVisibility(View.VISIBLE);
+            }
+
             String humidityString = String.valueOf(watering.getHumidity());
             mHumidityTextView.setText(humidityString);
 
-            int humidityStatus = watering.isDry() ? R.string.dry_soil : R.string.wet_soil;
-            mHumidityStatusTextView.setText(humidityStatus);
+            if (watering.isDry()) {
+                mHumidityStatusTextView.setText(R.string.dry_soil);
+
+                int orangeColorDry = getResources().getColor(R.color.colorOrangeDry);
+                mHumidityStatusTextView.setTextColor(orangeColorDry);
+
+                GradientDrawable background = (GradientDrawable) mHumidityTextView.getBackground();
+                background.setColor(ContextCompat.getColor(this, R.color.colorOrangeDry));
+            } else {
+                mHumidityStatusTextView.setText(R.string.wet_soil);
+
+                int blueColorWet = getResources().getColor(R.color.colorBlueWet);
+                mHumidityStatusTextView.setTextColor(blueColorWet);
+
+                GradientDrawable background = (GradientDrawable) mHumidityTextView.getBackground();
+                background.setColor(ContextCompat.getColor(this, R.color.colorBlueWet));
+            }
         } else {
             // TODO: USE ERROR LAYOUT
         }
