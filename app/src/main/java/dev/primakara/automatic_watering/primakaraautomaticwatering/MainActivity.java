@@ -51,16 +51,67 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         ButterKnife.bind(this);
 
+        mApiService = MainApplication.getApiClient().getApiService();
+
         mMainSwipeRefresh.setOnRefreshListener(this);
 
         checkWifiConnected();
 
+        setupMainLayout();
         setupFailedConnectLayout();
     }
 
     @Override
     public void onRefresh() {
         checkWifiConnected();
+    }
+
+    private void setupMainLayout() {
+        mAutomaticWateringSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            handleAutomaticWateringSwitch(isChecked);
+        });
+    }
+
+    private void handleAutomaticWateringSwitch(boolean isChecked) {
+        mMainLoading.setVisibility(View.VISIBLE);
+        if (isChecked) {
+            mApiService.getOn().enqueue(new Callback<Watering>() {
+                @Override
+                public void onResponse(Call<Watering> call, Response<Watering> response) {
+                    Watering watering = response.body();
+                    handleAutomaticWateringResponse(watering);
+                }
+
+                @Override
+                public void onFailure(Call<Watering> call, Throwable t) {
+                    //TODO: ERROR LAYOUT
+                }
+            });
+        } else {
+            mApiService.getOff().enqueue(new Callback<Watering>() {
+                @Override
+                public void onResponse(Call<Watering> call, Response<Watering> response) {
+                    Watering watering = response.body();
+                    handleAutomaticWateringResponse(watering);
+                }
+
+                @Override
+                public void onFailure(Call<Watering> call, Throwable t) {
+                    //TODO: ERROR LAYOUT
+                }
+            });
+        }
+    }
+
+    private void handleAutomaticWateringResponse(Watering watering) {
+        mMainLoading.setVisibility(View.GONE);
+
+        if (watering != null && watering.isSuccess()) {
+            mAutomaticWateringSwitch.setChecked(watering.isAutomaticWatering());
+            toggleFlushButton(watering.isAutomaticWatering());
+        } else {
+            //TODO: ERROR LAYOUT
+        }
     }
 
     private void setupFailedConnectLayout() {
@@ -97,14 +148,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void loadData() {
-        mApiService = MainApplication.getApiClient().getApiService();
-
         mApiService.getRoot().enqueue(new Callback<Watering>() {
             @Override
             public void onResponse(Call<Watering> call, Response<Watering> response) {
+                mMainLoading.setVisibility(View.GONE);
+                mMainSwipeRefresh.setRefreshing(false);
+
                 Watering watering = response.body();
-                if (watering != null) {
+                if (watering != null && watering.isSuccess()) {
                     handleSuccessData(watering);
+                } else {
+                    // TODO: ERROR LAYOUT
                 }
             }
 
@@ -118,41 +172,39 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void handleSuccessData(Watering watering) {
-        if (watering.isSuccess()) {
-            mMainLoading.setVisibility(View.GONE);
-            mMainSwipeRefresh.setRefreshing(false);
-            mMainLayout.setVisibility(View.VISIBLE);
+        mMainLayout.setVisibility(View.VISIBLE);
 
-            mAutomaticWateringSwitch.setChecked(watering.isAutomaticWatering());
+        mAutomaticWateringSwitch.setChecked(watering.isAutomaticWatering());
 
-            if (watering.isAutomaticWatering()) {
-                mFlushButton.setVisibility(View.GONE);
-            } else {
-                mFlushButton.setVisibility(View.VISIBLE);
-            }
+        toggleFlushButton(watering.isAutomaticWatering());
 
-            String humidityString = String.valueOf(watering.getHumidity());
-            mHumidityTextView.setText(humidityString);
+        String humidityString = String.valueOf(watering.getHumidity());
+        mHumidityTextView.setText(humidityString);
 
-            if (watering.isDry()) {
-                mHumidityStatusTextView.setText(R.string.dry_soil);
+        if (watering.isDry()) {
+            mHumidityStatusTextView.setText(R.string.dry_soil);
 
-                int orangeColorDry = getResources().getColor(R.color.colorOrangeDry);
-                mHumidityStatusTextView.setTextColor(orangeColorDry);
+            int orangeColorDry = getResources().getColor(R.color.colorOrangeDry);
+            mHumidityStatusTextView.setTextColor(orangeColorDry);
 
-                GradientDrawable background = (GradientDrawable) mHumidityTextView.getBackground();
-                background.setColor(ContextCompat.getColor(this, R.color.colorOrangeDry));
-            } else {
-                mHumidityStatusTextView.setText(R.string.wet_soil);
-
-                int blueColorWet = getResources().getColor(R.color.colorBlueWet);
-                mHumidityStatusTextView.setTextColor(blueColorWet);
-
-                GradientDrawable background = (GradientDrawable) mHumidityTextView.getBackground();
-                background.setColor(ContextCompat.getColor(this, R.color.colorBlueWet));
-            }
+            GradientDrawable background = (GradientDrawable) mHumidityTextView.getBackground();
+            background.setColor(ContextCompat.getColor(this, R.color.colorOrangeDry));
         } else {
-            // TODO: USE ERROR LAYOUT
+            mHumidityStatusTextView.setText(R.string.wet_soil);
+
+            int blueColorWet = getResources().getColor(R.color.colorBlueWet);
+            mHumidityStatusTextView.setTextColor(blueColorWet);
+
+            GradientDrawable background = (GradientDrawable) mHumidityTextView.getBackground();
+            background.setColor(ContextCompat.getColor(this, R.color.colorBlueWet));
+        }
+    }
+
+    private void toggleFlushButton(boolean isAutomaticWatering) {
+        if (isAutomaticWatering) {
+            mFlushButton.setVisibility(View.GONE);
+        } else {
+            mFlushButton.setVisibility(View.VISIBLE);
         }
     }
 
