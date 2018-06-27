@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -25,6 +26,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ApiService mApiService;
 
+    @BindView(R.id.main_layout) View mMainLayout;
+
+    @BindView(R.id.failed_connect) View mFailedConnect;
+
+    @BindView(R.id.main_loading) View mMainLoading;
     @BindView(R.id.btn_connect) Button mConnectButton;
 
     @Override
@@ -36,12 +42,14 @@ public class MainActivity extends AppCompatActivity {
 
         checkWifiConnected();
 
+        setupFailedConnectLayout();
+    }
+
+    private void setupFailedConnectLayout() {
         mConnectButton.setOnClickListener(view -> {
             Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
             startActivity(intent);
         });
-
-        loadData();
     }
 
     private void checkWifiConnected() {
@@ -60,9 +68,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (ssid != null) {
             if (ssid.equals(getString(R.string.wifi_ssid))) {
-                // TODO: Disable failed connect view
+                mFailedConnect.setVisibility(View.GONE);
+                loadData();
             } else {
-                // TODO: Enable failed connect view
+                mFailedConnect.setVisibility(View.VISIBLE);
+                mMainLoading.setVisibility(View.GONE);
             }
         }
     }
@@ -75,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Watering> call, Response<Watering> response) {
                 Watering watering = response.body();
                 if (watering != null) {
-                    Toast.makeText(MainActivity.this,
-                            String.valueOf(watering.getHumidity()), Toast.LENGTH_SHORT).show();
+                    handleSuccessData(watering);
                 }
             }
 
@@ -86,5 +95,12 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "OnFailure : " + t.getMessage());
             }
         });
+    }
+
+    private void handleSuccessData(Watering watering) {
+        Toast.makeText(MainActivity.this,
+                String.valueOf(watering.getHumidity()), Toast.LENGTH_SHORT).show();
+        mMainLoading.setVisibility(View.GONE);
+        mMainLayout.setVisibility(View.VISIBLE);
     }
 }
