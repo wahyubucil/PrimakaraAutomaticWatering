@@ -2,4 +2,5 @@
     <string name="app_name">Primakara Automatic Watering</string>
     <string name="wifi_ssid">\"Villa Bukit\"</string>
     <string name="connect">Hubungkan</string>
+    <string name="a11y_wifi_not_connected">Wifi not connected</string>
 </resources>
