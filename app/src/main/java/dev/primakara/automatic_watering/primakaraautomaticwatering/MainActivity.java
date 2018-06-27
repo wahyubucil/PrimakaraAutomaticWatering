@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        testRestApi();
+        loadData();
     }
 
     private void checkWifiConnected() {
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void testRestApi() {
+    private void loadData() {
         mApiService = MainApplication.getApiClient().getApiService();
 
         mApiService.getRoot().enqueue(new Callback<Watering>() {
