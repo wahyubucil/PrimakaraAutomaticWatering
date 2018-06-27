@@ -8,4 +8,13 @@ public interface ApiService {
 
     @GET("/")
     Call<Watering> getRoot();
+
+    @GET("/on")
+    Call<Watering> getOn();
+
+    @GET("/off")
+    Call<Watering> getOff();
+
+    @GET("/flush")
+    Call<Watering> getFlush();
 }
