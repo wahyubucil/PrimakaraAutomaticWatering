@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Primakara Automatic Watering</string>
+    <string name="wifi_ssid">\"Primakara Automatic Watering\"</string>
+    <string name="connect">Hubungkan</string>
+    <string name="a11y_wifi_not_connected">Wifi not connected</string>
+    <string name="connect_to_wifi">Hubungkan ponsel pada wifi \"Primakara Automatic Watering\"</string>
+    <string name="automatic_watering">Penyiraman Otomatis</string>
+    <string name="wet_soil">Tanah Lembab</string>
+    <string name="dry_soil">Tanah Kering. Segera Siram!</string>
+    <string name="flush">Siram</string>
+    <string name="something_is_wrong">Oops. Something is wrong. Swipe to refresh!</string>
+    <string name="a11y_error">There\'s an error</string>
 </resources>
