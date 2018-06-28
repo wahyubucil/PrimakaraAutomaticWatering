@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @BindView(R.id.failed_connect) View mFailedConnect;
 
+    @BindView(R.id.error_layout) View mErrorLayout;
+    @BindView(R.id.tv_error_text) TextView mErrorTextView;
+
     @BindView(R.id.main_loading) View mMainLoading;
     @BindView(R.id.btn_connect) Button mConnectButton;
 
@@ -90,7 +93,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 @Override
                 public void onFailure(Call<Watering> call, Throwable t) {
-                    //TODO: ERROR LAYOUT
+                    Log.e(TAG, "OnFailure : " + t.getMessage());
+                    String errorText = "Error retrieving data from internet : " + t.getMessage();
+                    useErrorLayout(errorText);
                 }
             });
         } else {
@@ -103,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 @Override
                 public void onFailure(Call<Watering> call, Throwable t) {
-                    //TODO: ERROR LAYOUT
+                    Log.e(TAG, "OnFailure : " + t.getMessage());
+                    String errorText = "Error retrieving data from internet : " + t.getMessage();
+                    useErrorLayout(errorText);
                 }
             });
         }
@@ -116,7 +123,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             mAutomaticWateringSwitch.setChecked(watering.isAutomaticWatering());
             toggleFlushButton(watering.isAutomaticWatering());
         } else {
-            //TODO: ERROR LAYOUT
+            String errorText = getString(R.string.something_is_wrong);
+            useErrorLayout(errorText);
         }
     }
 
@@ -136,7 +144,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             @Override
             public void onFailure(Call<Watering> call, Throwable t) {
-                //TODO: ERROR LAYOUT
+                Log.e(TAG, "OnFailure : " + t.getMessage());
+                String errorText = "Error retrieving data from internet : " + t.getMessage();
+                useErrorLayout(errorText);
             }
         });
     }
@@ -200,15 +210,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 if (watering != null && watering.isSuccess()) {
                     handleSuccessData(watering);
                 } else {
-                    // TODO: ERROR LAYOUT
+                    String errorText = getString(R.string.something_is_wrong);
+                    useErrorLayout(errorText);
                 }
             }
 
             @Override
             public void onFailure(Call<Watering> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Error retrieving data from internet : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "OnFailure : " + t.getMessage());
-                // TODO: CREATE ERROR LAYOUT WITH SWIPE REFRESH FALSE
+                String errorText = "Error retrieving data from internet : " + t.getMessage();
+                useErrorLayout(errorText);
             }
         });
     }
@@ -248,6 +259,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         } else {
             mFlushButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void useErrorLayout(String errorText) {
+        mMainLoading.setVisibility(View.GONE);
+        mMainLayout.setVisibility(View.GONE);
+        mFailedConnect.setVisibility(View.GONE);
+        mMainSwipeRefresh.setRefreshing(false);
+
+        mErrorLayout.setVisibility(View.VISIBLE);
+        mErrorTextView.setText(errorText);
     }
 
 }
