@@ -9,7 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "BASE_URL", "\"https://b6a528cb.ngrok.io\""
+        buildConfigField "String", "BASE_URL", "\"http://192.168.4.20\""
     }
     buildTypes {
         release {

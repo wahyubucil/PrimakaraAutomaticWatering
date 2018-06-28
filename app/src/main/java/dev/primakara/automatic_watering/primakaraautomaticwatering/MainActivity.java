@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mFailedConnect.setVisibility(View.VISIBLE);
                 mMainLoading.setVisibility(View.GONE);
                 mMainSwipeRefresh.setRefreshing(false);
+                mMainLayout.setVisibility(View.GONE);
             }
         }
     }
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onFailure(Call<Watering> call, Throwable t) {
                 Toast.makeText(MainActivity.this, "Error retrieving data from internet : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "OnFailure : " + t.getMessage());
-                // TODO: CREATE ERROR LAYOUT
+                // TODO: CREATE ERROR LAYOUT WITH SWIPE REFRESH FALSE
             }
         });
     }
