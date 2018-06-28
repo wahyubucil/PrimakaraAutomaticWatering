@@ -3,6 +3,8 @@ package dev.primakara.automatic_watering.primakaraautomaticwatering;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -147,29 +149,43 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void checkWifiConnected() {
-        WifiManager wifiManager = (WifiManager) getApplicationContext()
-                .getSystemService(Context.WIFI_SERVICE);
-
-        WifiInfo wifiInfo = null;
-        if (wifiManager != null) {
-            wifiInfo = wifiManager.getConnectionInfo();
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = null;
+        if (connectivityManager != null) {
+            wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         }
 
-        String ssid = null;
-        if (wifiInfo != null) {
-            ssid = wifiInfo.getSSID();
-        }
+        if (wifi != null && wifi.isConnected()) {
+            WifiManager wifiManager = (WifiManager) getApplicationContext()
+                    .getSystemService(Context.WIFI_SERVICE);
 
-        if (ssid != null) {
-            if (ssid.equals(getString(R.string.wifi_ssid))) {
-                mFailedConnect.setVisibility(View.GONE);
-                loadData();
-            } else {
-                mFailedConnect.setVisibility(View.VISIBLE);
-                mMainLoading.setVisibility(View.GONE);
-                mMainSwipeRefresh.setRefreshing(false);
-                mMainLayout.setVisibility(View.GONE);
+            WifiInfo wifiInfo = null;
+            if (wifiManager != null) {
+                wifiInfo = wifiManager.getConnectionInfo();
             }
+
+            String ssid = null;
+            if (wifiInfo != null) {
+                ssid = wifiInfo.getSSID();
+            }
+
+            if (ssid != null) {
+                if (ssid.equals(getString(R.string.wifi_ssid))) {
+                    mFailedConnect.setVisibility(View.GONE);
+                    loadData();
+                } else {
+                    mFailedConnect.setVisibility(View.VISIBLE);
+                    mMainLoading.setVisibility(View.GONE);
+                    mMainSwipeRefresh.setRefreshing(false);
+                    mMainLayout.setVisibility(View.GONE);
+                }
+            }
+        } else {
+            mFailedConnect.setVisibility(View.VISIBLE);
+            mMainLoading.setVisibility(View.GONE);
+            mMainSwipeRefresh.setRefreshing(false);
+            mMainLayout.setVisibility(View.GONE);
         }
     }
 
