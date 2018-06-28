@@ -26,6 +26,14 @@
             android:visibility="gone"
             layout="@layout/failed_connect" />
 
+        <include
+            android:id="@+id/error_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            layout="@layout/error_layout" />
+
         <FrameLayout
             android:id="@+id/main_loading"
             android:layout_width="match_parent"

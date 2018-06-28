@@ -8,4 +8,6 @@
     <string name="wet_soil">Tanah Lembab</string>
     <string name="dry_soil">Tanah Kering. Segera Siram!</string>
     <string name="flush">Siram</string>
+    <string name="something_is_wrong">Oops. Something is wrong. Swipe to refresh!</string>
+    <string name="a11y_error">There\'s an error</string>
 </resources>
