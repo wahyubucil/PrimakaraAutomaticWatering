@@ -70,6 +70,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mAutomaticWateringSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             handleAutomaticWateringSwitch(isChecked);
         });
+
+        mFlushButton.setOnClickListener(view -> {
+            handleFlushButton();
+        });
     }
 
     private void handleAutomaticWateringSwitch(boolean isChecked) {
@@ -112,6 +116,27 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         } else {
             //TODO: ERROR LAYOUT
         }
+    }
+
+    private void handleFlushButton() {
+        mMainLoading.setVisibility(View.VISIBLE);
+        mApiService.getFlush().enqueue(new Callback<Watering>() {
+            @Override
+            public void onResponse(Call<Watering> call, Response<Watering> response) {
+                mMainLoading.setVisibility(View.GONE);
+                Watering watering = response.body();
+                if (watering != null && watering.isSuccess()) {
+                    Toast.makeText(MainActivity.this,
+                            "Refresh dalam beberapa saat untuk cek kelembapan setelah disiram",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Watering> call, Throwable t) {
+                //TODO: ERROR LAYOUT
+            }
+        });
     }
 
     private void setupFailedConnectLayout() {
